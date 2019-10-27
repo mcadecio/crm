@@ -8,16 +8,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping(value = "/customer")
-public class ListController {
+public class CustomerController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerController.class);
 
 
     @GetMapping(value = "/list")
@@ -28,11 +29,39 @@ public class ListController {
         return "customer/customer-list";
     }
 
+    @GetMapping(value = "/showform")
+    public String showAddForm(Model model) {
+        model.addAttribute("newCustomer", new Customer());
+        return "customer/customer-add";
+    }
+
+    @PostMapping(value = "/processform")
+    public String processForm(@ModelAttribute(value = "newCustomer") Customer customer, Model model){
+        addCustomer(customer);
+        return showCustomers(model);
+    }
+    private void addCustomer(Customer customer){
+
+        try (Session session = Factory.getSessionFactory()) {
+            session.beginTransaction();
+
+            session.save(customer);
+
+            session.getTransaction().commit();
+
+            LOGGER.info("Customer {} added successfully!", customer);
+
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+
+    }
+
     private List<Customer> getCustomers(){
 
         Session session =  Factory.getSessionFactory();
 
-        List<Customer> customers = new ArrayList<>();
+        List<Customer> customers = null;
 
         try {
             session.beginTransaction();
