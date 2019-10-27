@@ -28,7 +28,7 @@
     </h1>
 </div>
 
-<table class="table table-hover">
+<table class="table table-hover" style="text-align: center">
     <thead>
     <tr>
         <td>First Name</td>
@@ -43,7 +43,7 @@
             <td>${temp.firstName}</td>
             <td>${temp.lastName}</td>
             <td>${temp.email}</td>
-            <td>$Action</td>
+            <td><a href="">Update</a> |<a href="">Delete</a></td>
         </tr>
     </c:forEach>
 
